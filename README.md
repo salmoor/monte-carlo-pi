@@ -29,5 +29,5 @@ You can run the program by
 mpirun np -4 mcpi 10000 
 ```
 
-* where **np** options is the number of processors used, and **10000** is the number of experiments performed.
+* where **np** option is the number of processors used, and **10000** is the number of experiments performed.
 
