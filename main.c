@@ -15,7 +15,6 @@ float makeShot(float);
 
 int main(int argc, char ** argv){
 
-
     //MPI vars
     int size, rank;
     //MPI_Status s;
@@ -32,19 +31,15 @@ int main(int argc, char ** argv){
 
     int numberOfExperiments = atoi(argv[1]);
     
-
     float * experiments = malloc(numberOfExperiments * sizeof(float));
     srand(time(NULL) + rank);
     experiments = MPI_Map_Func(experiments, numberOfExperiments, &makeShot);
-    
     
     float * hits = MPI_Filter_Func(experiments, numberOfExperiments, &inCircle);
     float hitSum = MPI_Fold_Func(hits, numberOfExperiments, 0, &add);
     float hitRatio = hitSum/numberOfExperiments;
     float PI = hitRatio * 4.0;
 
-    
-    
     endTime = MPI_Wtime();
     double elapsedTime = endTime - startTime;
     elapsedTime = elapsedTime * 1000.0;
@@ -53,7 +48,6 @@ int main(int argc, char ** argv){
     {
         printf("PI approximation with %d nodes and %d experiments: %f, Elapsed Time: %lf ms\n", size, numberOfExperiments, PI, elapsedTime);
     }     
-
 
     MPI_Finalize();
     return 0;

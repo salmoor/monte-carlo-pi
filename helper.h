@@ -45,19 +45,11 @@ float *MPI_Map_Func(float *arr, int size, float (*func)(float)){
     float * globalOutput = malloc(size * sizeof(float));
     float * localOutput = malloc(experimentsPerEach[rank] * sizeof(float));
 
-    //printf("Im rank: %d, my shots: %d, my offset: %d\n", rank, experimentsPerEach[rank], offset[rank]);
-
     for (size_t i = 0; i < experimentsPerEach[rank]; i++)
     {
         localOutput[i] = (*func)(arr[offset[rank] + i]);
     }
 
-    // for (size_t i = 0; i < experimentsPerEach[rank]; i++)
-    // {
-    //     printf("%f ", localOutput[i]);
-    // }
-    // printf("\n");
-    
     MPI_Allgatherv(localOutput, experimentsPerEach[rank], MPI_FLOAT, globalOutput, experimentsPerEach, offset, MPI_FLOAT, MPI_COMM_WORLD);
 
     return globalOutput;
@@ -78,7 +70,6 @@ float MPI_Fold_Func(float *arr, int size, float intial_value, float (*func)(floa
     computeOffsetAndOperations(size, node_size, &experimentsPerEach, &offset);
 
     float * globalOutput = malloc(node_size * sizeof(float));
-    
     float output = intial_value;
 
     for (size_t i = 0; i < experimentsPerEach[rank]; i++)
@@ -88,22 +79,12 @@ float MPI_Fold_Func(float *arr, int size, float intial_value, float (*func)(floa
 
     MPI_Allgather(&output, 1, MPI_FLOAT, globalOutput, 1, MPI_FLOAT, MPI_COMM_WORLD);
 
-
-    // for (size_t i = 0; i < node_size; i++)
-    // {
-    //     printf("%f ", globalOutput[i]);
-    // }
-    // printf("\n");
-
     output = 0;
 
     for (size_t i = 0; i < node_size; i++)
     {
         output = (*func)(output, globalOutput[i]);
     }
-
-    //printf("%f\n", output);
-    
 
     return output;
 
@@ -129,12 +110,6 @@ float * MPI_Filter_Func(float *arr, int size, bool (*pred)(float)){
     {
         localOutput[i] = (float) (*pred)(arr[offset[rank] + i]);
     }
-
-    // for (size_t i = 0; i < experimentsPerEach[rank]; i++)
-    // {
-    //     printf("%f ", localOutput[i]);
-    // }
-    // printf("\n");
 
     MPI_Allgatherv(localOutput, experimentsPerEach[rank], MPI_FLOAT, globalOutput, experimentsPerEach, offset, MPI_FLOAT, MPI_COMM_WORLD);
 
